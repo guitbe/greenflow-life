@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, ThumbsUp, ThumbsDown, ArrowRight } from 'lucide-react';
+import { X, ThumbsUp, ThumbsDown, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { SwapRecommendation } from '../types';
 import { apiService } from '../services/api';

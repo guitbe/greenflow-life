@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { Camera, Plus, Calculator } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { MealCreate, MealType, CarbonCalculationResponse } from '../types';
+import { MealType, CarbonCalculationResponse } from '../types';
 import { apiService } from '../services/api';
 
 interface MealLogFormProps {

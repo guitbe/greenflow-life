@@ -13,7 +13,7 @@ import SwapModal from './components/SwapModal';
 import { apiService } from './services/api';
 
 // Types
-import { User, SwapRecommendation } from './types';
+import { User } from './types';
 
 interface OnboardingData {
   name: string;
@@ -27,7 +27,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [showMealForm, setShowMealForm] = useState(false);
   const [showSwapModal, setShowSwapModal] = useState(false);
-  const [swapRecommendations, setSwapRecommendations] = useState<SwapRecommendation[]>([]);
   const [selectedMealId, setSelectedMealId] = useState<number>(0);
   const [originalFood, setOriginalFood] = useState<string>('');
 
@@ -59,7 +58,7 @@ function App() {
       };
 
       // Register user with onboarding data
-      const authResponse = await apiService.register({
+      await apiService.register({
         email: `${onboardingData.name.toLowerCase().replace(/\s+/g, '')}@greenflow.temp`,
         password: 'temp123', // In real app, get this from user
         name: onboardingData.name,
@@ -87,22 +86,7 @@ function App() {
     setUser(null);
   };
 
-  const openSwapModal = async (mealId: number, foodName: string) => {
-    try {
-      const recommendations = await apiService.getSwapRecommendations(mealId);
-      setSwapRecommendations(recommendations.recommendations || []);
-      setSelectedMealId(mealId);
-      setOriginalFood(foodName);
-      setShowSwapModal(true);
-    } catch (error) {
-      console.error('Failed to load swap recommendations:', error);
-      // Show modal with empty recommendations for demo
-      setSwapRecommendations([]);
-      setSelectedMealId(mealId);
-      setOriginalFood(foodName);
-      setShowSwapModal(true);
-    }
-  };
+
 
   if (isLoading) {
     return (
@@ -216,7 +200,7 @@ function App() {
             setSelectedMealId(0);
             setOriginalFood('');
           }}
-          recommendations={swapRecommendations}
+          recommendations={[]}
           mealLogId={selectedMealId}
           originalFood={originalFood}
         />

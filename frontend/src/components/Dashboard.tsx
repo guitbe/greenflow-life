@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -19,7 +17,7 @@ import {
   Calendar,
   Zap
 } from 'lucide-react';
-import { DashboardData, CarbonTrend } from '../types';
+import { DashboardData } from '../types';
 import { apiService } from '../services/api';
 import InsightCard from './InsightCard';
 

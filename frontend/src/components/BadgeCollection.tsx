@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Lock, Star, Calendar, TrendingUp, Users, Target, Award } from 'lucide-react';
+import { Trophy, Lock, Star, Calendar, Users, Target, Award } from 'lucide-react';
 import { Badge, UserBadge } from '../types';
 import { apiService } from '../services/api';
 import toast from 'react-hot-toast';
