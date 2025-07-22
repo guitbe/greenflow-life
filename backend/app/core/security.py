@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import JWTError, jwt
+import jwt
 from passlib.context import CryptContext
 import os
 from dotenv import load_dotenv
@@ -36,5 +36,5 @@ def verify_token(token: str):
         if email is None:
             return None
         return email
-    except JWTError:
+    except jwt.InvalidTokenError:
         return None 
