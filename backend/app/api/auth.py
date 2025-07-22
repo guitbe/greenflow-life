@@ -33,10 +33,10 @@ class UserResponse(BaseModel):
     target_carbon_reduction: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.post("/register", response_model=Token)
-def register(user_data: UserRegister, db: Session = Depends(get_db)):
+async def register(user_data: UserRegister, db: Session = Depends(get_db)):
     # Check if user exists
     db_user = db.query(User).filter(User.email == user_data.email).first()
     if db_user:
@@ -44,7 +44,7 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="이미 등록된 이메일입니다."
         )
-    
+
     # Create new user
     hashed_password = get_password_hash(user_data.password)
     db_user = User(
@@ -53,21 +53,21 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
         name=user_data.name,
         dietary_preference=user_data.dietary_preference
     )
-    
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    
+
     # Create access token
     access_token = create_access_token(data={"sub": db_user.email})
-    
+
     return {
         "access_token": access_token,
         "token_type": "bearer"
     }
 
 @router.post("/login", response_model=Token)
-def login(user_data: UserLogin, db: Session = Depends(get_db)):
+async def login(user_data: UserLogin, db: Session = Depends(get_db)):
     # Authenticate user
     user = db.query(User).filter(User.email == user_data.email).first()
     if not user or not verify_password(user_data.password, user.password_hash):
@@ -76,18 +76,18 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
             detail="이메일 또는 비밀번호가 올바르지 않습니다.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     # Create access token
     access_token = create_access_token(data={"sub": user.email})
-    
+
     return {
         "access_token": access_token,
         "token_type": "bearer"
     }
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
     """현재 로그인한 사용자 정보 반환"""
-    
+
     # Verify token
     email = verify_token(credentials.credentials)
     if email is None:
@@ -96,7 +96,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             detail="유효하지 않은 토큰입니다.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     # Get user from database
     user = db.query(User).filter(User.email == email).first()
     if user is None:
@@ -105,10 +105,10 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             detail="사용자를 찾을 수 없습니다.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     return user
 
 @router.get("/me", response_model=UserResponse)
-def get_current_user_info(current_user: User = Depends(get_current_user)):
+async def get_current_user_info(current_user: User = Depends(get_current_user)):
     """현재 로그인한 사용자 정보 조회"""
     return current_user 
