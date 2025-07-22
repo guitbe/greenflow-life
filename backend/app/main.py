@@ -20,14 +20,32 @@ app = FastAPI(
 )
 
 # CORS middleware with environment variable support
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
-cors_origins = [origin.strip() for origin in cors_origins]  # Remove whitespace
+cors_origins_env = os.getenv("CORS_ORIGINS", "")
+if cors_origins_env:
+    cors_origins = [origin.strip() for origin in cors_origins_env.split(",")]
+else:
+    # Default origins for development and production
+    cors_origins = [
+        "http://localhost:3000",
+        "https://my-greenflow-app.vercel.app",
+        "https://greenflow-life.vercel.app",  # Alternative domain
+    ]
+
+# For development, also allow all localhost ports
+if os.getenv("ENVIRONMENT") != "production":
+    cors_origins.extend([
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001"
+    ])
+
+print(f"CORS Origins: {cors_origins}")  # Debug logging
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
 )
 
