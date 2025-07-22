@@ -23,7 +23,6 @@ class ApiService {
       // Check if we're on any Vercel deployment
       const hostname = window.location.hostname;
       const isVercelDeploy = hostname.includes('vercel.app') || hostname.includes('vercel.com');
-      const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.');
       
       // Production: use Render backend for any Vercel deployment
       if (isVercelDeploy) {
