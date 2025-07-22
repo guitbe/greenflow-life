@@ -24,3 +24,7 @@ INFO:     127.0.0.1:50223 - "OPTIONS /api/dashboard/ HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50223 - "OPTIONS /api/dashboard/ HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50224 - "GET /api/dashboard/ HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50223 - "GET /api/dashboard/ HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10020]

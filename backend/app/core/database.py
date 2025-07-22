@@ -9,6 +9,12 @@ load_dotenv()
 # Database URL with fallback to SQLite for development
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./greenflow.db")
 
+# Convert postgresql:// to postgresql+psycopg:// for psycopg3 compatibility
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
+elif DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
+
 # Create engine with appropriate settings based on database type
 if DATABASE_URL.startswith("sqlite"):
     # SQLite specific settings
