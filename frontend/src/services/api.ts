@@ -18,8 +18,18 @@ class ApiService {
   private api: AxiosInstance;
 
   constructor() {
+    // Determine API URL based on environment
+    const getApiUrl = () => {
+      // Production: use Render backend
+      if (window.location.hostname.includes('vercel.app')) {
+        return 'https://greenflow-life.onrender.com/api';
+      }
+      // Development: use environment variable or localhost
+      return process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    };
+
     this.api = axios.create({
-      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000/api',
+      baseURL: getApiUrl(),
       headers: {
         'Content-Type': 'application/json',
       },
