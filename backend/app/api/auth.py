@@ -33,7 +33,7 @@ class UserResponse(BaseModel):
     target_carbon_reduction: float
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 @router.post("/register", response_model=Token)
 async def register(user_data: UserRegister, db: Session = Depends(get_db)):
@@ -53,50 +53,62 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
         name=user_data.name,
         dietary_preference=user_data.dietary_preference
     )
+    
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     
     # Create access token
-    access_token = create_access_token(data={"sub": user_data.email})
+    access_token = create_access_token(data={"sub": db_user.email})
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
 @router.post("/login", response_model=Token)
 async def login(user_data: UserLogin, db: Session = Depends(get_db)):
     # Authenticate user
-    db_user = db.query(User).filter(User.email == user_data.email).first()
-    if not db_user or not verify_password(user_data.password, db_user.password_hash):
+    user = db.query(User).filter(User.email == user_data.email).first()
+    if not user or not verify_password(user_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="이메일 또는 비밀번호가 잘못되었습니다."
+            detail="이메일 또는 비밀번호가 올바르지 않습니다.",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
     # Create access token
-    access_token = create_access_token(data={"sub": user_data.email})
+    access_token = create_access_token(data={"sub": user.email})
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db)
-):
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
+    """현재 로그인한 사용자 정보 반환"""
+    
+    # Verify token
     email = verify_token(credentials.credentials)
     if email is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="토큰이 유효하지 않습니다."
+            detail="유효하지 않은 토큰입니다.",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
+    # Get user from database
     user = db.query(User).filter(User.email == email).first()
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="사용자를 찾을 수 없습니다."
+            detail="사용자를 찾을 수 없습니다.",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
     return user
 
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
+    """현재 로그인한 사용자 정보 조회"""
     return current_user 
