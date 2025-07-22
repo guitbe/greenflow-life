@@ -19,31 +19,46 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS middleware with environment variable support
+# CORS middleware with comprehensive Vercel support
 cors_origins_env = os.getenv("CORS_ORIGINS", "")
-if cors_origins_env:
-    cors_origins = [origin.strip() for origin in cors_origins_env.split(",")]
-else:
-    # Default origins for development and production
-    cors_origins = [
-        "http://localhost:3000",
-        "https://my-greenflow-app.vercel.app",
-        "https://greenflow-life.vercel.app",  # Alternative domain
+
+def is_vercel_domain(origin):
+    """Check if origin is a Vercel domain"""
+    vercel_patterns = [
+        ".vercel.app",
+        "-vercel.app", 
+        ".vercel.com"
     ]
+    return any(pattern in origin for pattern in vercel_patterns)
 
-# For development, also allow all localhost ports
-if os.getenv("ENVIRONMENT") != "production":
-    cors_origins.extend([
-        "http://localhost:3001",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001"
-    ])
+def cors_origin_validator(origin: str):
+    """Dynamic CORS origin validation"""
+    allowed_origins = []
+    
+    if cors_origins_env:
+        allowed_origins = [origin.strip() for origin in cors_origins_env.split(",")]
+    else:
+        # Default allowed origins
+        allowed_origins = [
+            "http://localhost:3000",
+            "http://localhost:3001", 
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:3001",
+            "https://my-greenflow-app.vercel.app",
+            "https://greenflow-life.vercel.app",
+        ]
+    
+    # Always allow Vercel domains for this project
+    if is_vercel_domain(origin) and ("greenflow" in origin or "my-greenflow" in origin):
+        return True
+        
+    return origin in allowed_origins
 
-print(f"CORS Origins: {cors_origins}")  # Debug logging
+print(f"CORS Environment: {cors_origins_env or 'Using defaults with Vercel support'}")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app|http://localhost:\d+|https://greenflow-life\.vercel\.app|https://my-greenflow.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],

@@ -18,14 +18,23 @@ class ApiService {
   private api: AxiosInstance;
 
   constructor() {
-    // Determine API URL based on environment
+    // Determine API URL based on environment with comprehensive detection
     const getApiUrl = () => {
-      // Production: use Render backend
-      if (window.location.hostname.includes('vercel.app')) {
+      // Check if we're on any Vercel deployment
+      const hostname = window.location.hostname;
+      const isVercelDeploy = hostname.includes('vercel.app') || hostname.includes('vercel.com');
+      const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.');
+      
+      // Production: use Render backend for any Vercel deployment
+      if (isVercelDeploy) {
+        console.log('🚀 Detected Vercel deployment, using production API');
         return 'https://greenflow-life.onrender.com/api';
       }
+      
       // Development: use environment variable or localhost
-      return process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+      const devUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+      console.log('🔧 Using development API:', devUrl);
+      return devUrl;
     };
 
     this.api = axios.create({
