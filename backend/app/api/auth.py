@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict
+from pydantic_core import ValidationError
+from email_validator import validate_email, EmailNotValidError
 from datetime import timedelta
 
 from app.core.database import get_db
@@ -12,13 +14,13 @@ router = APIRouter()
 security = HTTPBearer()
 
 class UserRegister(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     name: str
     dietary_preference: DietaryPreference = DietaryPreference.OMNIVORE
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 class Token(BaseModel):
@@ -26,14 +28,13 @@ class Token(BaseModel):
     token_type: str
 
 class UserResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     email: str
     name: str
     dietary_preference: DietaryPreference
     target_carbon_reduction: float
-
-    class Config:
-        orm_mode = True
 
 @router.post("/register", response_model=Token)
 async def register(user_data: UserRegister, db: Session = Depends(get_db)):

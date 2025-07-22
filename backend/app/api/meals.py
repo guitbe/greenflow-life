@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
@@ -8,6 +8,7 @@ from app.core.database import get_db
 from app.api.auth import get_current_user
 from app.models.user import User
 from app.models.meal_log import MealLog, MealType
+from app.data.korean_food_carbon import KOREAN_FOOD_CARBON
 
 router = APIRouter()
 
@@ -18,6 +19,8 @@ class MealCreate(BaseModel):
     image_url: Optional[str] = None
 
 class MealResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     food_name: str
     portion_size: float
@@ -25,9 +28,6 @@ class MealResponse(BaseModel):
     carbon_footprint: float
     image_url: Optional[str]
     logged_at: datetime
-
-    class Config:
-        from_attributes = True
 
 @router.post("/", response_model=MealResponse)
 async def create_meal_log(

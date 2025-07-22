@@ -1,28 +1,28 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from sqlalchemy import and_
 from typing import List, Optional
 from datetime import datetime, timedelta
 
 from app.core.database import get_db
 from app.api.auth import get_current_user
 from app.models.user import User
-from app.models.challenge import Challenge, UserChallenge, ChallengeType
+from app.models.challenge import Challenge, UserChallenge, ChallengeStatus
 
 router = APIRouter()
 
 class ChallengeResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
-    name: str
+    title: str
     description: str
-    challenge_type: ChallengeType
     target_value: int
+    unit: str
     badge_icon: Optional[str]
     duration_days: int
     is_active: bool
-
-    class Config:
-        from_attributes = True
 
 class UserChallengeResponse(BaseModel):
     id: int
