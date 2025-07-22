@@ -33,7 +33,7 @@ class UserResponse(BaseModel):
     target_carbon_reduction: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.post("/register", response_model=Token)
 async def register(user_data: UserRegister, db: Session = Depends(get_db)):
