@@ -8,7 +8,7 @@ from app.core.database import get_db
 from app.api.auth import get_current_user
 from app.models.user import User
 from app.models.meal_log import MealLog, MealType
-from app.data.korean_food_carbon import KOREAN_FOOD_CARBON
+from app.data.korean_food_carbon import get_food_carbon_footprint, KOREAN_FOOD_CARBON_DB
 
 router = APIRouter()
 
@@ -94,10 +94,18 @@ async def get_meal_log(
 
 def calculate_carbon_footprint(food_name: str, portion_size: float) -> float:
     """
-    음식의 탄소 발자국 계산 (간단한 예시)
-    실제 구현에서는 포괄적인 음식 데이터베이스를 사용해야 함
+    음식의 탄소 발자국 계산 - 한국 음식 데이터베이스 사용
     """
-    # Simplified carbon footprint database (kg CO2e per 100g)
+    # 먼저 한국 음식 데이터베이스에서 정확한 이름으로 검색
+    if food_name in KOREAN_FOOD_CARBON_DB:
+        return get_food_carbon_footprint(food_name, portion_size)
+    
+    # 부분 일치 검색
+    for food_key in KOREAN_FOOD_CARBON_DB.keys():
+        if food_name in food_key or food_key in food_name:
+            return get_food_carbon_footprint(food_key, portion_size)
+    
+    # 일반적인 카테고리별 기본값 (kg CO2e per 100g 기준으로 변환)
     carbon_factors = {
         "소고기": 2.5,
         "돼지고기": 1.2,
