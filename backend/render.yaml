@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: greenflow-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 2
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: greenflow-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: CORS_ORIGINS
+        value: https://your-app-name.vercel.app,http://localhost:3000
+
+databases:
+  - name: greenflow-db
+    plan: free
+    databaseName: greenflow
+    user: greenflow_user
+    region: singapore
+    version: "15" 

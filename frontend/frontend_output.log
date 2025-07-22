@@ -1,0 +1,235 @@
+
+> greenflow-frontend@1.0.0 start
+> react-scripts start
+
+(node:11460) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:11460) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+Starting the development server...
+
+Compiled successfully!
+
+You can now view greenflow-frontend in the browser.
+
+  Local:            http://localhost:3000
+  On Your Network:  http://172.30.114.207:3000
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+webpack compiled successfully
+No issues found.
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/components/BadgeCollection.tsx
+  Line 3:40:  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/Dashboard.tsx
+  Line 4:3:    'BarChart' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 5:3:    'Bar' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 22:25:  'CarbonTrend' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/MealLogForm.tsx
+  Line 6:10:  'MealCreate' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/SwapModal.tsx
+  Line 3:13:  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/api.ts
+  Line 1:32:  'AxiosResponse' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/components/BadgeCollection.tsx
+  Line 3:40:  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/Dashboard.tsx
+  Line 4:3:    'BarChart' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 5:3:    'Bar' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 22:25:  'CarbonTrend' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/MealLogForm.tsx
+  Line 6:10:  'MealCreate' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/SwapModal.tsx
+  Line 3:13:  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/api.ts
+  Line 1:32:  'AxiosResponse' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/App.tsx:106:69
+TS2322: Type '(userData: User) => void' is not assignable to type '(userData: OnboardingData) => void'.
+  Types of parameters 'userData' and 'userData' are incompatible.
+    Type 'OnboardingData' is missing the following properties from type 'User': id, email, dietary_preference, target_carbon_reduction
+    104 |             path="/onboarding" 
+    105 |             element={
+  > 106 |               user ? <Navigate to="/dashboard" /> : <OnboardingFlow onComplete={handleLogin} />
+        |                                                                     ^^^^^^^^^^
+    107 |             } 
+    108 |           />
+    109 |           
+
+ERROR in src/App.tsx:116:19
+TS2322: Type '{ user: User; onMealClick: (mealId: number) => void; }' is not assignable to type 'IntrinsicAttributes'.
+  Property 'user' does not exist on type 'IntrinsicAttributes'.
+    114 |               user ? (
+    115 |                 <Dashboard 
+  > 116 |                   user={user} 
+        |                   ^^^^
+    117 |                   onMealClick={openSwapModal}
+    118 |                 />
+    119 |               ) : (
+
+ERROR in src/App.tsx:157:19
+TS2322: Type '{ onSubmit: (mealData: any) => void; onCancel: () => void; }' is not assignable to type 'IntrinsicAttributes & MealLogFormProps'.
+  Property 'onSubmit' does not exist on type 'IntrinsicAttributes & MealLogFormProps'.
+    155 |                 </div>
+    156 |                 <MealLogForm 
+  > 157 |                   onSubmit={(mealData) => {
+        |                   ^^^^^^^^
+    158 |                     // Handle meal submission
+    159 |                     setShowMealForm(false);
+    160 |                     // Refresh dashboard data
+
+ERROR in src/App.tsx:157:30
+TS7006: Parameter 'mealData' implicitly has an 'any' type.
+    155 |                 </div>
+    156 |                 <MealLogForm 
+  > 157 |                   onSubmit={(mealData) => {
+        |                              ^^^^^^^^
+    158 |                     // Handle meal submission
+    159 |                     setShowMealForm(false);
+    160 |                     // Refresh dashboard data
+
+ERROR in src/App.tsx:173:13
+TS2322: Type '{ mealId: number; onClose: () => void; }' is not assignable to type 'IntrinsicAttributes & SwapModalProps'.
+  Property 'mealId' does not exist on type 'IntrinsicAttributes & SwapModalProps'.
+    171 |         {showSwapModal && selectedMealId && (
+    172 |           <SwapModal
+  > 173 |             mealId={selectedMealId}
+        |             ^^^^^^
+    174 |             onClose={() => {
+    175 |               setShowSwapModal(false);
+    176 |               setSelectedMealId(null);
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/App.tsx
+  Line 55:13:  'authResponse' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  Line 83:9:   'openSwapModal' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/components/BadgeCollection.tsx
+  Line 3:40:  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/Dashboard.tsx
+  Line 4:3:    'BarChart' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 5:3:    'Bar' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 22:25:  'CarbonTrend' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/MealLogForm.tsx
+  Line 6:10:  'MealCreate' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/SwapModal.tsx
+  Line 3:13:  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/api.ts
+  Line 1:32:  'AxiosResponse' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/App.tsx
+  Line 55:13:  'authResponse' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  Line 83:9:   'openSwapModal' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/components/BadgeCollection.tsx
+  Line 3:40:  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/Dashboard.tsx
+  Line 4:3:    'BarChart' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 5:3:    'Bar' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 22:25:  'CarbonTrend' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/MealLogForm.tsx
+  Line 6:10:  'MealCreate' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/SwapModal.tsx
+  Line 3:13:  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/api.ts
+  Line 1:32:  'AxiosResponse' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/App.tsx:59:9
+TS2322: Type 'string' is not assignable to type '"omnivore" | "vegetarian" | "vegan" | "pescatarian"'.
+    57 |         password: 'temp123', // In real app, get this from user
+    58 |         name: onboardingData.name,
+  > 59 |         dietary_preference: onboardingData.dietaryPreferences[0] || 'omnivore'
+       |         ^^^^^^^^^^^^^^^^^^
+    60 |       });
+    61 |       
+    62 |       // Get user data
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/App.tsx
+  Line 62:13:  'authResponse' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  Line 90:9:   'openSwapModal' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/components/BadgeCollection.tsx
+  Line 3:40:  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/Dashboard.tsx
+  Line 4:3:    'BarChart' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 5:3:    'Bar' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 22:25:  'CarbonTrend' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/MealLogForm.tsx
+  Line 6:10:  'MealCreate' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/SwapModal.tsx
+  Line 3:13:  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/api.ts
+  Line 1:32:  'AxiosResponse' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/App.tsx
+  Line 62:13:  'authResponse' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  Line 90:9:   'openSwapModal' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/components/BadgeCollection.tsx
+  Line 3:40:  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/Dashboard.tsx
+  Line 4:3:    'BarChart' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 5:3:    'Bar' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 22:25:  'CarbonTrend' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/MealLogForm.tsx
+  Line 6:10:  'MealCreate' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/components/SwapModal.tsx
+  Line 3:13:  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/services/api.ts
+  Line 1:32:  'AxiosResponse' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+No issues found.
