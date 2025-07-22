@@ -10,6 +10,12 @@ class ChallengeType(enum.Enum):
     SWAP_ACCEPTANCE = "swap_acceptance"
     WEEKLY_GOAL = "weekly_goal"
 
+class ChallengeStatus(enum.Enum):
+    NOT_STARTED = "not_started"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
 class Challenge(Base):
     __tablename__ = "challenges"
     
@@ -33,6 +39,7 @@ class UserChallenge(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     challenge_id = Column(Integer, ForeignKey("challenges.id"), nullable=False)
     current_progress = Column(Integer, default=0)
+    status = Column(Enum(ChallengeStatus), default=ChallengeStatus.NOT_STARTED)
     completed = Column(Boolean, default=False)
     started_at = Column(DateTime, default=datetime.utcnow)
     completed_at = Column(DateTime, nullable=True)
