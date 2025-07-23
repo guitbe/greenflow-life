@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { 
   XAxis, 
@@ -27,11 +27,7 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async (isRetry: boolean = false) => {
+  const fetchDashboardData = useCallback(async (isRetry: boolean = false) => {
     try {
       if (!isRetry) {
         setLoading(true);
@@ -68,7 +64,11 @@ const Dashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [retryCount]); // Include retryCount in useCallback dependency
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]); // Now fetchDashboardData is stable
 
   if (loading) {
     return (
