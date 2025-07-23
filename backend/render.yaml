@@ -23,7 +23,7 @@ services:
       - key: LOG_LEVEL
         value: info
       - key: CORS_ORIGINS
-        value: https://your-app-name.vercel.app,http://localhost:3000
+        value: https://my-greenflow-app.vercel.app,https://greenflow-life.vercel.app,http://localhost:3000
       - key: PYTHON_VERSION
         value: "3.11.9"
 

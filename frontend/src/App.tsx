@@ -49,18 +49,22 @@ function App() {
   }, []);
 
   const handleOnboardingComplete = async (onboardingData: OnboardingData) => {
+    // Map dietary preferences to valid type
+    const getDietaryPreference = (preferences: string[]): 'omnivore' | 'vegetarian' | 'vegan' | 'pescatarian' => {
+      const validPreferences = ['omnivore', 'vegetarian', 'vegan', 'pescatarian'] as const;
+      const firstPreference = preferences[0]?.toLowerCase();
+      return validPreferences.includes(firstPreference as any) ? firstPreference as any : 'omnivore';
+    };
+
     try {
-      // Map dietary preferences to valid type
-      const getDietaryPreference = (preferences: string[]): 'omnivore' | 'vegetarian' | 'vegan' | 'pescatarian' => {
-        const validPreferences = ['omnivore', 'vegetarian', 'vegan', 'pescatarian'] as const;
-        const firstPreference = preferences[0]?.toLowerCase();
-        return validPreferences.includes(firstPreference as any) ? firstPreference as any : 'omnivore';
-      };
+      // Generate unique email with timestamp to avoid duplicates
+      const timestamp = Date.now();
+      const uniqueEmail = `${onboardingData.name.toLowerCase().replace(/\s+/g, '')}.${timestamp}@greenflow.temp`;
 
       // Register user with onboarding data
       await apiService.register({
-        email: `${onboardingData.name.toLowerCase().replace(/\s+/g, '')}@greenflow.temp`,
-        password: 'temp123', // In real app, get this from user
+        email: uniqueEmail,
+        password: `temp123_${timestamp}`, // Make password unique as well
         name: onboardingData.name,
         dietary_preference: getDietaryPreference(onboardingData.dietaryPreferences)
       });
@@ -68,14 +72,25 @@ function App() {
       // Get user data
       const userData = await apiService.getCurrentUser();
       setUser(userData);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration failed:', error);
-      // For demo purposes, create a mock user
+      
+      // Show more specific error message
+      let errorMessage = '회원가입에 실패했습니다.';
+      if (error?.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      // For demo purposes, still create a mock user but show the error
+      alert(`⚠️ ${errorMessage}\n\n데모 모드로 계속 진행합니다.`);
+      
       setUser({
-        id: 1,
+        id: Date.now(), // Use timestamp as unique ID
         email: `${onboardingData.name.toLowerCase()}@demo.com`,
         name: onboardingData.name,
-        dietary_preference: 'omnivore',
+        dietary_preference: getDietaryPreference(onboardingData.dietaryPreferences),
         target_carbon_reduction: 20
       });
     }

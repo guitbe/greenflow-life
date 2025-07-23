@@ -25,19 +25,46 @@ const Dashboard: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (isRetry: boolean = false) => {
     try {
-      setLoading(true);
+      if (!isRetry) {
+        setLoading(true);
+        setError(null);
+      }
+      
       const data = await apiService.getDashboardData();
       setDashboardData(data);
-    } catch (err) {
-      setError('대시보드 데이터를 불러오는 데 실패했습니다.');
+      setRetryCount(0); // Reset retry count on success
+    } catch (err: any) {
       console.error('Dashboard data fetch error:', err);
+      
+      // Handle different types of errors
+      let errorMessage = '대시보드 데이터를 불러오는 데 실패했습니다.';
+      
+      if (err?.response?.status === 401 || err?.response?.status === 403) {
+        errorMessage = '인증이 필요합니다. 다시 로그인해주세요.';
+      } else if (err?.response?.status === 500) {
+        errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      } else if (err?.code === 'NETWORK_ERROR' || !navigator.onLine) {
+        errorMessage = '네트워크 연결을 확인해주세요.';
+      }
+      
+      setError(errorMessage);
+      
+      // Auto-retry up to 3 times for network/server errors
+      if (retryCount < 3 && (err?.response?.status >= 500 || err?.code === 'NETWORK_ERROR')) {
+        setTimeout(() => {
+          console.log(`Retrying dashboard fetch... (attempt ${retryCount + 1})`);
+          setRetryCount(prev => prev + 1);
+          fetchDashboardData(true);
+        }, 2000 * (retryCount + 1)); // Exponential backoff
+      }
     } finally {
       setLoading(false);
     }
@@ -57,7 +84,7 @@ const Dashboard: React.FC = () => {
         <div className="text-center">
           <p className="text-red-500 mb-4">{error}</p>
           <button 
-            onClick={fetchDashboardData}
+            onClick={() => fetchDashboardData(false)}
             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
           >
             다시 시도

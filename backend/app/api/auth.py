@@ -89,25 +89,39 @@ async def login(user_data: UserLogin, db: Session = Depends(get_db)):
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
     """현재 로그인한 사용자 정보 반환"""
 
-    # Verify token
-    email = verify_token(credentials.credentials)
-    if email is None:
+    try:
+        # Verify token
+        email = verify_token(credentials.credentials)
+        if email is None:
+            print(f"Token verification failed for token: {credentials.credentials[:20]}...")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="유효하지 않은 토큰입니다.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        # Get user from database
+        user = db.query(User).filter(User.email == email).first()
+        if user is None:
+            print(f"User not found for email: {email}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="사용자를 찾을 수 없습니다.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        return user
+    
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
+    except Exception as e:
+        print(f"Unexpected error in get_current_user: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="유효하지 않은 토큰입니다.",
+            detail="인증 처리 중 오류가 발생했습니다.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    # Get user from database
-    user = db.query(User).filter(User.email == email).first()
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="사용자를 찾을 수 없습니다.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    return user
 
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_info(current_user: User = Depends(get_current_user)):

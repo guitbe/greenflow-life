@@ -57,8 +57,19 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
+          console.log('🔑 Authentication failed - redirecting to login');
           localStorage.removeItem('access_token');
-          window.location.href = '/login';
+          // Only redirect if not already on login page
+          if (!window.location.pathname.includes('onboarding')) {
+            window.location.href = '/onboarding';
+          }
+        } else if (error.response?.status === 403) {
+          console.log('🚫 Access forbidden - token may be invalid');
+          localStorage.removeItem('access_token');
+          // Only redirect if not already on login page
+          if (!window.location.pathname.includes('onboarding')) {
+            window.location.href = '/onboarding';
+          }
         }
         return Promise.reject(error);
       }
